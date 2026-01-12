@@ -1,4 +1,4 @@
-# Inkwell
+# GhostPad
 
 A minimal, powerful browser-based text editor where **the URL is your document**.
 
