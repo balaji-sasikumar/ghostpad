@@ -1,73 +1,75 @@
-# Welcome to your Lovable project
+# Inkwell
 
-## Project info
+A minimal, powerful browser-based text editor where **the URL is your document**.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Features
 
-## How can I edit this code?
+- ✍️ **Markdown Editor** - Write in Markdown with live preview
+- 🔗 **URL-based Storage** - Your document lives in the URL, share it instantly
+- 💾 **Auto-save** - Content is debounced and saved automatically
+- 🌙 **Dark/Light Mode** - Follows system preference with manual toggle
+- ⚡ **Zero Backend** - Runs entirely in your browser, no server needed
+- 📱 **Responsive** - Works on desktop and mobile
 
-There are several ways of editing your application.
+## How It Works
 
-**Use Lovable**
+### URL Compression Strategy
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+1. **Compression**: Text is compressed using the browser's `CompressionStream` API (gzip)
+2. **Encoding**: Compressed data is converted to URL-safe Base64
+3. **Storage**: The encoded string is stored in the URL hash (`#`)
 
-Changes made via Lovable will be committed automatically to this repo.
+This allows documents to be shared via URL while keeping the link reasonably short.
 
-**Use your preferred IDE**
+### Fallback Storage
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+When content exceeds URL length limits (~2000 characters), the app automatically:
+1. Stores content in `localStorage`
+2. Shows a warning indicator
+3. Clears the URL hash to prevent data loss
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+On page load, the app checks both sources and restores the most recent version.
 
-Follow these steps:
+### Browser Compatibility
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- **CompressionStream API**: Chrome 80+, Edge 80+, Firefox 113+, Safari 16.4+
+- **Fallback**: Older browsers use uncompressed Base64 (larger URLs but functional)
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Usage
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. Start typing in the editor (left pane)
+2. See live Markdown preview (right pane)
+3. Click the share button to copy the URL
+4. Share the URL - anyone can view your document
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### Keyboard Shortcuts
 
-**Edit a file directly in GitHub**
+- `Tab` - Insert 2 spaces for indentation
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Limitations
 
-**Use GitHub Codespaces**
+- URL length is limited by browsers (~2000 chars is safe)
+- Very large documents will fall back to local storage (not shareable)
+- No real-time collaboration (each URL is a snapshot)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Tech Stack
 
-## What technologies are used for this project?
+- React 18 with TypeScript
+- Vite for bundling
+- Tailwind CSS for styling
+- react-markdown for Markdown rendering
+- CompressionStream API for gzip compression
 
-This project is built with:
+## Future Improvements
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- [ ] QR code generation for sharing
+- [ ] Export to PDF/HTML
+- [ ] Vim keybindings option
+- [ ] Focus mode (hide toolbar)
+- [ ] Multiple document tabs
+- [ ] Service worker for offline support
+- [ ] Syntax highlighting for code blocks
 
-## How can I deploy this project?
+## License
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+MIT
