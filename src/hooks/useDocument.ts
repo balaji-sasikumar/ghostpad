@@ -32,7 +32,7 @@ interface UseDocumentReturn extends DocumentState {
   charCount: number;
 }
 
-const DEFAULT_CONTENT = `# Welcome to Inkwell
+const DEFAULT_CONTENT = `# Welcome to GhostPad
 
 A minimal, powerful text editor where the **URL is your document**.
 
@@ -75,7 +75,7 @@ export const useDocument = (): UseDocumentReturn => {
   // Update document title based on content
   useEffect(() => {
     if (!content) {
-      document.title = 'Inkwell';
+      document.title = 'GhostPad';
       return;
     }
 
@@ -84,7 +84,7 @@ export const useDocument = (): UseDocumentReturn => {
     const firstLine = content.split('\n')[0].slice(0, 50);
     const title = headingMatch ? headingMatch[1] : firstLine;
     
-    document.title = title ? `${title} - Inkwell` : 'Inkwell';
+    document.title = title ? `${title} - GhostPad` : 'GhostPad';
   }, [content]);
 
   // Load content on mount
