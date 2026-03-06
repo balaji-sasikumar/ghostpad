@@ -67,17 +67,20 @@ export const encryptContent = async (
   passphrase: string,
 ): Promise<string> => {
   const enc = new TextEncoder();
-  const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH));
-  const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
+  const saltArr = crypto.getRandomValues(new Uint8Array(SALT_LENGTH));
+  const ivArr = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
+  const salt = new Uint8Array(saltArr);
+  const iv = new Uint8Array(ivArr);
   const key = await deriveKey(passphrase, salt);
 
+  const plainEncoded = enc.encode(plaintext);
   const ciphertext = await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv },
+    { name: 'AES-GCM', iv: iv as unknown as BufferSource },
     key,
-    enc.encode(plaintext),
+    plainEncoded as unknown as BufferSource,
   );
 
-  return `${ENC_PREFIX}${toBase64Url(salt.buffer)}.${toBase64Url(iv.buffer)}.${toBase64Url(ciphertext)}`;
+  return `${ENC_PREFIX}${toBase64Url(salt.buffer as ArrayBuffer)}.${toBase64Url(iv.buffer as ArrayBuffer)}.${toBase64Url(ciphertext)}`;
 };
 
 /**
