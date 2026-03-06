@@ -351,3 +351,86 @@
     @apply transition-colors duration-200;
   }
 }
+
+/* ===== KeyPrompt ===== */
+@layer components {
+  .key-prompt-backdrop {
+    @apply fixed inset-0 z-50 flex items-center justify-center;
+    background: hsl(var(--background) / 0.85);
+    backdrop-filter: blur(6px);
+  }
+
+  .key-prompt-card {
+    @apply w-full max-w-md mx-4 rounded-2xl border p-8 shadow-2xl;
+    background: hsl(var(--card));
+    border-color: hsl(var(--border));
+  }
+
+  .key-prompt-icon {
+    @apply w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5;
+    background: hsl(var(--primary) / 0.12);
+    color: hsl(var(--primary));
+  }
+
+  .key-prompt-title {
+    @apply text-xl font-semibold text-center mb-1;
+    font-family: var(--font-body);
+    color: hsl(var(--foreground));
+  }
+
+  .key-prompt-subtitle {
+    @apply text-sm text-center mb-6;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .key-prompt-form {
+    @apply flex flex-col gap-4;
+  }
+
+  .key-prompt-field {
+    @apply flex flex-col gap-1.5;
+  }
+
+  .key-prompt-label {
+    @apply text-xs font-medium flex items-center gap-1.5;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .key-prompt-input-wrap {
+    @apply relative;
+  }
+
+  .key-prompt-input {
+    @apply pr-10;
+    background: hsl(var(--background));
+    border-color: hsl(var(--border));
+    color: hsl(var(--foreground));
+    font-family: var(--font-mono);
+  }
+
+  .key-prompt-toggle {
+    @apply absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity;
+    color: hsl(var(--foreground));
+  }
+
+  .key-prompt-error {
+    @apply text-xs px-3 py-2 rounded-md;
+    background: hsl(var(--destructive) / 0.1);
+    color: hsl(var(--destructive));
+  }
+
+  .key-prompt-submit {
+    @apply w-full mt-1;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  .key-prompt-submit:hover {
+    background: hsl(var(--primary) / 0.88);
+  }
+
+  .key-prompt-footer {
+    @apply text-xs text-center mt-5;
+    color: hsl(var(--muted-foreground));
+  }
+}
