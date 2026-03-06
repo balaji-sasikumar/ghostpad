@@ -20,22 +20,27 @@ const ENC_PREFIX = 'enc:';
 export const isEncryptedHash = (hash: string): boolean =>
   hash.startsWith(ENC_PREFIX);
 
-/** Encode bytes → URL-safe base64 */
+/** Encode ArrayBuffer → URL-safe base64 */
 const toBase64Url = (buf: ArrayBuffer): string =>
-  btoa(String.fromCharCode(...new Uint8Array(buf)))
+  btoa(String.fromCharCode(...Array.from(new Uint8Array(buf))))
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=+$/, '');
 
-/** Decode URL-safe base64 → Uint8Array */
-const fromBase64Url = (str: string): Uint8Array => {
+/** Decode URL-safe base64 → ArrayBuffer */
+const fromBase64Url = (str: string): ArrayBuffer => {
   const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
   const raw = atob(base64);
-  return Uint8Array.from(raw, (c) => c.charCodeAt(0));
+  const buf = new ArrayBuffer(raw.length);
+  const view = new Uint8Array(buf);
+  for (let i = 0; i < raw.length; i++) {
+    view[i] = raw.charCodeAt(i);
+  }
+  return buf;
 };
 
 /** Derive an AES-GCM CryptoKey from a passphrase + salt via PBKDF2 */
-const deriveKey = async (passphrase: string, salt: Uint8Array): Promise<CryptoKey> => {
+const deriveKey = async (passphrase: string, salt: ArrayBuffer): Promise<CryptoKey> => {
   const enc = new TextEncoder();
   const keyMaterial = await crypto.subtle.importKey(
     'raw',
@@ -67,20 +72,20 @@ export const encryptContent = async (
   passphrase: string,
 ): Promise<string> => {
   const enc = new TextEncoder();
-  const saltArr = crypto.getRandomValues(new Uint8Array(SALT_LENGTH));
-  const ivArr = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
-  const salt = new Uint8Array(saltArr);
-  const iv = new Uint8Array(ivArr);
+
+  // Generate random salt and IV as plain ArrayBuffers
+  const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH)).buffer as ArrayBuffer;
+  const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH)).buffer as ArrayBuffer;
+
   const key = await deriveKey(passphrase, salt);
 
-  const plainEncoded = enc.encode(plaintext);
   const ciphertext = await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv: iv as unknown as BufferSource },
+    { name: 'AES-GCM', iv },
     key,
-    plainEncoded as unknown as BufferSource,
+    enc.encode(plaintext),
   );
 
-  return `${ENC_PREFIX}${toBase64Url(salt.buffer as ArrayBuffer)}.${toBase64Url(iv.buffer as ArrayBuffer)}.${toBase64Url(ciphertext)}`;
+  return `${ENC_PREFIX}${toBase64Url(salt)}.${toBase64Url(iv)}.${toBase64Url(ciphertext)}`;
 };
 
 /**
